@@ -27,13 +27,16 @@ int main() {
         cin >> size;
         ofstream infile("data.txt");
         infile<<size<<endl;
-        for (int i = 0; i <= size; i++) {
+        for (int i = 0; i < size; i++) {
             int random = rand() % (size / 3);
             for (int j = 0; j <= random + 1; j++) {
                 first[i] = i + 1;
-                second[i] = rand() % size + 1;
-                cout<<first[i]<<" "<<second[i]<<endl;
-                infile<<first[i]<<" "<<second[i]<<endl;
+                int temp = rand() % size + 1;
+                if ((i + 1) != temp) {
+                    second[i] = temp;
+                    cout<<first[i]<<" "<<second[i]<<endl;
+                    infile<<first[i]<<" "<<second[i]<<endl;
+                }
             }
         }
         infile.close();
