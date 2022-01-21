@@ -9,7 +9,7 @@
 */
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]){
     srand((unsigned) time(0));
     int choice, size;
     int first[300];
@@ -25,24 +25,24 @@ int main() {
     if (choice == 1) {
         cout << "Choose your size: \n";
         cin >> size;
-        ofstream infile("data.txt");
+        ofstream infile(argv[1]);
         infile<<size<<endl;
         for (int i = 0; i < size; i++) {
             int random = rand() % (size / 3);
-            for (int j = 0; j <= random + 1; j++) {
+            int temp =i+1;
+            while(temp<size) {
                 first[i] = i + 1;
-                int temp = rand() % size + 1;
-                if ((i + 1) != temp) {
-                    second[i] = temp;
-                    cout<<first[i]<<" "<<second[i]<<endl;
-                    infile<<first[i]<<" "<<second[i]<<endl;
-                }
+                temp += rand() % 3 + 1;
+                if (temp>=size) break;
+                second[i] = temp;
+                cout<<first[i]<<" "<<second[i]<<endl;
+                infile<<first[i]<<" "<<second[i]<<endl;
             }
         }
         infile.close();
     }
     else if (choice == 2) {
-        std::ifstream infile("data.txt");
+        std::ifstream infile(argv[1]);
         int a, b;
         infile>>a;
         size = a;
