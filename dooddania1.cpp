@@ -129,10 +129,10 @@ prique generator_swapow(int *tab,int n,wierzchol *graf,int val,int times){
         J=0;
     }
     int v;
-    if (n>bignumberedge){
+    //if (n>bignumberedge){
     zeruj2(0,n,graf);
     v=kolorujsekwencyjnie2(0,n,tab,graf);
-    }
+    //}
     while( I<n){
         while (J<n){
             t++;
@@ -236,7 +236,7 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
     for (int i=0;i<l_iteracji;i++){
 
         cerr<<mini<<endl;
-        prique swapy=generator_swapow_reversed(tab,n,graf,mini-gap,fragment);
+        prique swapy=generator_swapow(tab,n,graf,mini-gap,fragment);
         //mini-gap);
         //cerr<<"wygenerowane swapy"<<endl;
         sw=swapy.top().second;
@@ -416,7 +416,7 @@ int main(int argc, char* argv[]){
      }
      if(wyb==4){
             zeruj2(0,W,graf);
-            min_kolor=tabu_search(100000,l_tabu,W,tab,graf);
+            min_kolor=tabu_search(1000000,l_tabu,W,tab,graf);
     }
     cout<<min_kolor<<endl;
 }
