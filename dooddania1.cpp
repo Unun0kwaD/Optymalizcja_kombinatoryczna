@@ -235,7 +235,7 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
     cerr<<mini<<"\n";
     for (int i=0;i<l_iteracji;i++){
 
-        cerr<<mini<<endl;
+        //cerr<<mini<<endl;
         prique swapy=generator_swapow(tab,n,graf,mini-gap,fragment);
         //mini-gap);
         //cerr<<"wygenerowane swapy"<<endl;
@@ -258,7 +258,7 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
         else timesrepeat=0;
         lastv=v;
         */
-        cout<<v<<"\t";
+        //cout<<v<<"\t";
         if (v<mini){
             mini=v;
             cerr<<mini<<endl;
