@@ -18,6 +18,7 @@ int bignumberedge=600;
 int gap=1;
 int fragment=200;//dla dużych 200, dla małych jakieś 2000 albo i więcej
 int I=0,J=0;
+int garbage=2;
 using namespace std;
 int W;
 class myComparator
@@ -28,7 +29,8 @@ public:
         return p1.first > p2.first;
     }
 };
-typedef priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,myComparator> prique;
+typedef pair<int,int> pi;
+typedef priority_queue<pair<int,pi>,vector<pair<int,pi>>,myComparator> prique;
 void wprowadz(int *tab1,int *tab2,int n){
     for (int i=0;i<n;i++){
         tab1[i]=tab2[i];
@@ -114,6 +116,17 @@ int kolorujsekwencyjnie2(int s,int n,int *tab,wierzchol *graf){
     }
     return maxkolor[n-1];
 }
+int kolorujsort(int n,int *tab,wierzchol *graf){
+    priority_queue<pi, vector<pi> > pq;
+    for (int i =0;i<n;i++){
+        pq.push({graf[i].somsiedzi.size(),i});
+    }
+    for (int i =0;i<n;i++){
+        tab[i]=pq.top().second;
+        pq.pop();
+    }
+    return kolorujsekwencyjnie(n,tab,graf);
+}
 void showtab(int *tab,int n){
     for(int i = 0; i<n;i++){
         cerr<<tab[i]<<" ";
@@ -124,16 +137,14 @@ prique generator_swapow(int *tab,int n,wierzchol *graf,int val,int times){
     //dodadać parametr który będzie sprawdzał maksymalnie X sąsiadów zaczynając od N który będzie powiększony o krok poprzedniego lub jężeli znajdzie wystarczająco lepsze rozwiązanie
     prique swapy;
     int t=0;
-    if(J+1>=n){
-        I=0;
-        J=0;
-    }
+    if(J+1>=n){ I=0; J=0; }
     int v;
     //if (n>bignumberedge){
     zeruj2(0,n,graf);
     v=kolorujsekwencyjnie2(0,n,tab,graf);
     //}
     while( I<n){
+        //J=I+1;// dla większych wukomentuj
         while (J<n){
             t++;
             swap(tab[I],tab[J]);
@@ -149,8 +160,8 @@ prique generator_swapow(int *tab,int n,wierzchol *graf,int val,int times){
                 return swapy;
             }
         }
-        J=I+1;// dla większych wukomentuj
         I++;
+        //J=I+1;
     }
     I=0;
     J=0;
@@ -231,7 +242,7 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
     //shuffle(tab,&tab[n], default_random_engine(seed));
     I=n;
     J=n;//dla generator reversed
-    mini=kolorujsekwencyjnie2(0,n,tab,graf);
+    mini=kolorujsort(n,tab,graf);
     cerr<<mini<<"\n";
     for (int i=0;i<l_iteracji;i++){
 
@@ -259,10 +270,6 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
         lastv=v;
         */
         //cout<<v<<"\t";
-        if (v<mini){
-            mini=v;
-            cerr<<mini<<endl;
-        }
         bool czy_w_tabu=0;
         for(int i=0;i<tabu.size();i++){//przeszukuje tabu czy nie ma tam nowego swapa
             if(tabu[i].first==sw.first && tabu[i].second==sw.second){
@@ -297,7 +304,10 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
                 }
             }
         }
-        while (swapy.size()>0){// szuka dobrych swapów wśród tych zostawionych
+       // cout<<"szuka w śmieciah\n";
+       /*
+        while (swapy.size()>0 ){//&& swapy.top().first < mini+garbage){// szuka dobrych swapów wśród tych zostawionych
+            
             sw=swapy.top().second;
             swapy.pop();
             swap(tab[sw.first],tab[sw.second]);
@@ -308,13 +318,14 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
                 break;
             }
             else{
-                nowval=v;
                 if (v<mini){
                     mini=v;
-                    cerr<<mini<<endl;
+                    cerr<<"garbage: "<<mini<<endl;
                 }
             }
         }
+        //cerr<<"koniec smieci\n";
+        */
     }
     return mini;
 
@@ -397,6 +408,7 @@ int main(int argc, char* argv[]){
         l_tabu=stoi(argv[3]);//wielkośc tablicy tabu
         gap=stoi(argv[3]);// najlepiej 1
         fragment=stoi(argv[4]);//dla dużych 200 dla mniejszych 2000 dla najmniejszych 100000
+        garbage=stoi(argv[5]);//dla o ile gorszych wartości szuka w pozostałych swapach
     }
     if(wyb==1)
         min_kolor=kolorujsekwencyjnie(W,tab,graf);
@@ -417,7 +429,10 @@ int main(int argc, char* argv[]){
      if(wyb==4){
             zeruj2(0,W,graf);
             min_kolor=tabu_search(1000000,l_tabu,W,tab,graf);
-    }
+     }
+     if(wyb==5){
+            min_kolor=kolorujsort(W,tab,graf);
+     }
     cout<<min_kolor<<endl;
 }
 /*
@@ -425,23 +440,26 @@ int main(int argc, char* argv[]){
 Podaj liczbe losowych sekwencji kolorowania: 
 10000
 8
-tabu: 6 //fragment 2000
+tabu, zwykle koloruj bez sort: 6 //fragment 2000 ./dooddania1 queen6.txt 4 1 100 200000 0
 ./dooddania1 le450_5a.txt
 Podaj liczbe losowych sekwencji kolorowania: 
 10000
 12
+tabu koloruj sort: 10  ./dooddania1 le450_5a.txt 4 6 10 20000000 2
 better tabu: 8 //dla fragment 2000 tabusize=10
 ./dooddania1 gc500.txt
 Podaj liczbe losowych sekwencji kolorowania: 
 10000
 84
-tabu:81
+tabu: 83 ./dooddania1 gc500.txt 4 6 10 2000000000 0
+tabu:81 koloruj sort ./dooddania1 gc500.txt 4 10 1 200 0
 better tabu :76 // dla fragment=200 tabusize=10
 /dooddania1 gc_1000_300013.txt
 Podaj liczbe losowych sekwencji kolorowania: 
 3000 
 152
 tabu reversed:
+tabu z kolorujsort: 146 ./dooddania1 gc_1000_300013.txt 4 10 1 200
 better tabu 149 // dla fragment=200 tabusize=10
 taby reversed 150 // dla fragment=200 tabusize=10
 tabu: 150 - po 3 minutach bez wykomentowania
