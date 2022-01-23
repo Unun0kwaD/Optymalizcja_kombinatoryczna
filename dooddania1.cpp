@@ -318,6 +318,7 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
                 break;
             }
             else{
+                tabu.push_back(sw);
                 if (v<mini){
                     mini=v;
                     cerr<<"garbage: "<<mini<<endl;
@@ -492,4 +493,12 @@ tabu: 12
 200
 500
 1000
+*/
+/*
+./dooddania1 gc500.txt 4 20 2000 1
+82
+
+
+
+
 */
