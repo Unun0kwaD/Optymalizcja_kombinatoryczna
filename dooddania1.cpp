@@ -407,9 +407,9 @@ int main(int argc, char* argv[]){
     else{
         wyb=stoi(argv[2]);//4-tabu
         l_tabu=stoi(argv[3]);//wielkośc tablicy tabu
-        gap=stoi(argv[3]);// najlepiej 1
-        fragment=stoi(argv[4]);//dla dużych 200 dla mniejszych 2000 dla najmniejszych 100000
-        garbage=stoi(argv[5]);//dla o ile gorszych wartości szuka w pozostałych swapach
+        gap=stoi(argv[4]);// najlepiej 1
+        fragment=stoi(argv[5]);//dla dużych 200 dla mniejszych 2000 dla najmniejszych 100000
+        garbage=stoi(argv[6]);//dla o ile gorszych wartości szuka w pozostałych swapach
     }
     if(wyb==1)
         min_kolor=kolorujsekwencyjnie(W,tab,graf);
@@ -496,9 +496,11 @@ tabu: 12
 */
 /*
 ./dooddania1 gc500.txt 4 20 2000 1
-82
-
-
+80
+./dooddania1 gc_1000_300013.txt 4 1 50 100 1
+150
+./dooddania1 le450_5a.txt 4 1 50 200 1
+11
 
 
 */
