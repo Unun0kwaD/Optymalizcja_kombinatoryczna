@@ -142,8 +142,8 @@ prique generator_swapow(int *tab,int n,wierzchol *graf,int val,int times){
     if(J+1>=n){ I=0; J=0; }
     int v;
     //if (n>bignumberedge){
-    zeruj2(0,n,graf);
-    v=kolorujsekwencyjnie2(0,n,tab,graf);
+    zeruj(n,graf);
+    v=kolorujsekwencyjnie(n,tab,graf);
     //}
     while( I<n){
         //J=I+1;// dla większych wukomentuj
