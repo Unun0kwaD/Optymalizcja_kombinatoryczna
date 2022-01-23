@@ -92,6 +92,12 @@ struct wierzchol{
         return 0;
     }
 };
+void showtab(int *tab,int n){
+    for(int i = 0; i<n;i++){
+        cerr<<tab[i]<<" ";
+    }
+    cerr<<endl;
+}
 void zeruj(int n,wierzchol *graf){
     for(int i=1;i<=n;i++){
         graf[i].czysc();
@@ -121,20 +127,16 @@ int kolorujsekwencyjnie2(int s,int n,int *tab,wierzchol *graf){
 int kolorujsort(int n,int *tab,wierzchol *graf){
     priority_queue<pi, vector<pi> > pq;
     for (int i =0;i<n;i++){
-        pq.push({graf[i].somsiedzi.size(),i+1});
+        pq.push({graf[i+1].somsiedzi.size(),i+1});
     }
     for (int i =0;i<n;i++){
         tab[i]=pq.top().second;
         pq.pop();
     }
+    //showtab(tab,n);
     return kolorujsekwencyjnie(n,tab,graf);
 }
-void showtab(int *tab,int n){
-    for(int i = 0; i<n;i++){
-        cerr<<tab[i]<<" ";
-    }
-    cerr<<endl;
-}
+
 prique generator_swapow(int *tab,int n,wierzchol *graf,int val,int times){
     //dodadać parametr który będzie sprawdzał maksymalnie X sąsiadów zaczynając od N który będzie powiększony o krok poprzedniego lub jężeli znajdzie wystarczająco lepsze rozwiązanie
     prique swapy;
@@ -159,6 +161,8 @@ prique generator_swapow(int *tab,int n,wierzchol *graf,int val,int times){
             J++;
             if (t>times || v<val){ 
             //&& n>bignumberedge){
+                //cout<<v<<"\n";
+                //showtab(tab,n);
                 return swapy;
             }
         }
@@ -243,10 +247,10 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
     //unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     //shuffle(tab,&tab[n], default_random_engine(seed));
     mini=kolorujsort(n,tab,graf);
-    cerr<<mini<<"\n";
+    //cerr<<mini<<"\n";
     for (int i=0;i<l_iteracji;i++){
 
-        //cerr<<mini<<endl;
+        cerr<<mini<<endl;
         prique swapy=generator_swapow(tab,n,graf,mini-gap,fragment);
         //mini-gap);
         //cerr<<"wygenerowane swapy"<<endl;
@@ -279,14 +283,14 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
             }
         }
         while(0<swapy.size()){//jeżeli znajdzie swapa który nie jest w tabu to go uzyj i wyjdz
-            if(!czy_w_tabu ){//&& mini>=v){
+            if(!czy_w_tabu && mini>=v){
                 swap(tab[sw.first],tab[sw.second]);
                 nowval=v;
                 tabu.push_back(sw);
                 if(tabu.size()>dlugosc_tabu)
                     tabu.pop_front();
                 if (v<mini){
-                    //showtab(tab,n);
+                    showtab(tab,n);
                     mini=v;
                     cerr<<mini<<endl;
                 }
@@ -306,6 +310,7 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
             }
         }
        // cout<<"szuka w śmieciah\n";
+       /*
         while (swapy.size()>0 && swapy.top().first < mini+garbage){// szuka dobrych swapów wśród tych zostawionych
             
             sw=swapy.top().second;
@@ -325,6 +330,7 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
                 }
             }
         }
+        */
         //cerr<<"koniec smieci\n";
         
     }
@@ -429,11 +435,12 @@ int main(int argc, char* argv[]){
      }
      if(wyb==4){
             zeruj2(0,W,graf);
-            min_kolor=tabu_search(1000000,l_tabu,W,tab,graf);
+            min_kolor=tabu_search(10000,l_tabu,W,tab,graf);
      }
      if(wyb==5){
             min_kolor=kolorujsort(W,tab,graf);
      }
+    // showtab(tab,W);
     cout<<min_kolor<<endl;
 }
 /*
@@ -498,9 +505,12 @@ tabu: 12
 ./dooddania1 gc500.txt 4 20 2000 1
 80
 ./dooddania1 gc_1000_300013.txt 4 1 50 100 1
-150
+146
 ./dooddania1 le450_5a.txt 4 1 50 200 1
-11
+10
+./dooddania1 gc500.txt 4 20 20 2000 1
+79
 
-
+gc_1000 sekwencja:
+646 747 631 267 852 297 671 409 606 580 923 113 687 439 89 689 737 724 311 174 975 281 126 599 452 377 370 926 850 481 859 624 386 40 956 816 446 434 324 803 669 585 203 986 798 692 582 310 260 146 86 890 887 857 825 710 675 536 253 245 56 921 723 663 525 520 263 119 749 735 500 368 286 278 225 151 5 955 760 700 554 521 349 209 205 199 165 77 854 830 806 610 516 512 496 433 400 362 322 269 185 121 30 11 4 990 892 767 763 523 591 549 204 35 31 881 715 691 635 250 233 218 153 97 10 949 917 915 856 717 697 535 228 206 195 156 106 28 27 996 962 882 823 810 726 676 442 408 114 3 998 980 929 847 814 658 653 626 577 533 528 515 493 451 445 348 320 290 212 172 133 98 23 972 913 895 764 708 619 572 312 238 226 187 88 84 918 870 779 752 743 738 716 634 609 592 558 443 407 389 361 346 333 328 274 244 179 70 66 41 863 829 709 648 552 473 436 414 388 358 254 149 82 72 13 937 884 831 818 812 808 786 730 636 514 511 502 415 356 330 329 321 138 76 54 17 7 994 950 802 790 781 249 713 694 640 541 509 485 472 417 404 393 213 129 105 29 987 912 872 851 732 719 701 698 650 600 593 588 510 490 449 347 315 303 128 246 164 145 124 45 999 974 948 791 785 754 618 586 470 375 354 337 304 291 219 159 99 63 44 15 942 920 903 871 838 794 774 771 759 733 693 656 649 647 450 422 373 355 326 216 200 176 167 122 107 973 953 943 935 907 906 894 877 867 800 758 718 673 655 613 556 507 489 458 444 277 231 147 136 116 61 997 873 841 834 811 741 736 705 666 642 595 561 551 540 529 468 448 447 307 296 248 207 202 71 25 932 928 896 858 828 795 762 740 722 721 686 684 672 661 641 612 590 513 410 309 298 183 169 120 26 24 981 916 901 855 789 744 651 545 538 491 463 456 455 429 392 383 371 353 338 319 265 255 252 227 220 197 140 135 92 39 978 959 886 731 682 564 560 543 537 522 465 462 457 454 336 327 273 78 73 34 8 6 914 899 889 819 804 756 699 645 604 569 431 366 364 335 271 214 184 182 166 87 69 961 951 941 938 299 897 883 879 853 793 765 639 601 579 574 469 459 379 313 276 268 81 48 927 891 878 824 821 782 596 563 546 482 420 342 341 331 266 236 229 132 91 38 988 967 860 845 797 753 695 637 628 614 602 589 539 499 495 430 423 365 343 323 300 259 251 241 198 192 150 148 62 55 47 33 945 939 876 837 827 799 597 553 501 416 398 357 208 201 194 180 139 83 59 32 22 16 933 925 865 861 809 796 778 644 638 581 530 486 479 471 464 453 413 397 382 325 301 272 243 242 240 237 230 173 163 162 110 93 79 58 1000 995 787 777 751 742 702 657 570 483 360 223 191 178 154 108 67 64 983 977 911 832 815 761 745 662 630 505 438 426 399 387 380 369 285 189 152 100 969 968 965 947 805 784 748 706 654 633 605 550 542 519 424 394 372 334 305 282 239 234 210 177 157 134 118 57 19 18 985 966 924 862 826 792 769 696 681 659 517 498 467 412 403 401 374 316 262 196 190 171 160 141 43 14 2 946 904 893 880 868 846 843 768 728 704 665 565 562 559 508 478 351 345 314 293 284 257 211 117 991 984 957 931 930 910 839 755 898 567 548 544 419 261 193 188 186 137 95 65 37 934 902 801 788 729 725 625 607 573 402 302 292 222 68 52 993 976 960 958 766 685 632 622 555 484 460 339 308 264 217 109 36 1 989 919 866 775 594 378 367 283 181 155 101 817 746 620 584 547 527 503 440 340 332 294 258 168 142 96 50 21 979 739 734 703 664 629 575 557 488 475 428 418 396 381 256 170 143 49 12 905 840 835 807 712 608 603 526 487 461 435 432 385 350 306 287 127 74 952 842 578 359 131 115 60 964 690 679 660 643 598 421 384 344 247 144 125 9 900 874 836 813 773 772 576 566 534 504 497 390 288 270 123 922 888 848 822 727 583 571 531 518 474 318 317 235 112 94 46 992 963 940 909 885 757 617 492 480 476 411 215 111 908 714 677 670 627 623 477 427 376 232 224 104 90 85 80 51 833 776 711 466 441 391 289 175 53 970 954 936 683 680 678 668 425 130 42 20 869 849 844 532 103 652 587 295 158 783 615 506 494 944 770 280 221 75 720 707 437 279 161 971 820 750 611 667 621 616 275 102 875 780 982 864 688 524 674 395 405 568 352 406 363
 */
