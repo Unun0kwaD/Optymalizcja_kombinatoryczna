@@ -504,7 +504,7 @@ tabu: 12
 1000
 */
 /*
-./dooddania1 gc500.txt 4 20 2000 1
+
 80
 ./dooddania1 gc_1000_300013.txt 4 1 50 100 1
 146
@@ -538,7 +538,7 @@ gc_1000 sekwencja:
 31
 S
 
-./dooddania1 gc_1000_300013.txt 4 10 10 1 200 1
+./dooddania1 gc_1000_300013.txt 4 10 10 1 200
 145
 
 ./dooddania
@@ -546,6 +546,6 @@ S
 78
 
 
-./dooddania1 le450_5a.txt 4 10 10 1 200 1
+./dooddania1 le450_5a.txt 4 10 10 1 200
 10
 */
