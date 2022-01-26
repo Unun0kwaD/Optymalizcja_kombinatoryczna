@@ -416,6 +416,7 @@ int main(int argc, char* argv[]){
     cout<<"2. N losowych sekwencji kolorowania: "<<endl;
     cout<<"3. Według jednej podanej sekwencji kolorowania: "<<endl;
     cout<<"4. Tabu search "<<endl;
+    cout<<"5. Metoda LF (Largest First) "<<endl;
     /*TODO:
     cout<<"4. Według sąsiedztwa: "<<endl;
     cout<<"5. najpierw wierzcholki o najwiekszym stopniu: "<<endl;
