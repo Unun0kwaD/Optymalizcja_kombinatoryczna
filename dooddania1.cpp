@@ -11,6 +11,7 @@
 #include <utility>  
 #include <queue>
 #include <signal.h>
+#include <ctime>
 
 //typedef priority_queue< pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>>,greater<pair<int,pair<int,int>>>> prq
 int kolory[1000],maxkolor[1000];
@@ -19,6 +20,8 @@ int gap=1;
 int fragment=200;//dla dużych 200, dla małych jakieś 2000 albo i więcej
 int I=0,J=0;
 int garbage=0;
+time_t start_time;
+int seconds=300;
 using namespace std;
 int W;
 class myComparator
@@ -94,12 +97,18 @@ struct wierzchol{
 };
 void showtab(int *tab,int n,wierzchol *graf){
     for(int i = 0; i<n;i++){
+        cerr<<tab[i]<<"  ";
+    }
+    cerr<<endl;
+}
+void showtab2(int *tab,int n,wierzchol *graf){
+    for(int i = 0; i<n;i++){
         cerr<<tab[i]<<":"<<(graf[tab[i]]).kolor<<"  ";
     }
     cerr<<endl;
 }
 void zeruj(int n,wierzchol *graf){
-    for(int i=1;i<=n;i++){
+    for(int i=0;i<=n;i++){
         graf[i].czysc();
     }
 }
@@ -148,7 +157,6 @@ prique generator_swapow(int *tab,int n,wierzchol *graf,int val,int times){
     v=kolorujsekwencyjnie(n,tab,graf);
     //}
     while( I<n){
-        //J=I+1;// dla większych wukomentuj
         while (J<n){
             t++;
             swap(tab[I],tab[J]);
@@ -249,8 +257,10 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
     mini=kolorujsort(n,tab,graf);
     //cerr<<mini<<"\n";
     for (int i=0;i<l_iteracji;i++){
-
-        cerr<<mini<<endl;
+        time_t now_time = time(nullptr); if(now_time-start_time>seconds){ return mini; }
+        //cerr<<now_time-start_time<<"\n";
+       
+        //cerr<<mini<<endl;
         prique swapy=generator_swapow(tab,n,graf,mini-gap,fragment);
         //mini-gap);
         //cerr<<"wygenerowane swapy"<<endl;
@@ -259,6 +269,8 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
         swapy.pop();
         nowval=v;
         /*
+        //lepiej zwiększyć rozmiar tabu
+        //
         //przy długiej powtarającej się serii przetasowuje sekwencję
         //nic to nie daje gdyż tabusearch samemu stopniowo zmienia sekwencję w trakcie gdy powtarzają się wyniki
         //więc losując wracamy do punktu początkowego
@@ -286,13 +298,13 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
             if(!czy_w_tabu && mini>=v){
                 swap(tab[sw.first],tab[sw.second]);
                // cout<<sw.first<<"\t"<<sw.second<<endl;
-               // showtab(tab,n,graf);
+                //showtab(tab,n,graf);
                 nowval=v;
                 tabu.push_back(sw);
                 if(tabu.size()>dlugosc_tabu)
                     tabu.pop_front();
                 if (v<mini){
-                    //showtab(tab,n,graf);
+                    showtab(tab,n,graf);
                     mini=v;
                     cerr<<mini<<endl;
                 }
@@ -340,6 +352,8 @@ int tabu_search(int l_iteracji,int dlugosc_tabu,int n,int *tab,wierzchol *graf){
 
 }
 int main(int argc, char* argv[]){
+    start_time=time(nullptr);
+    int seconds=300;
     int a=1,b=1, min_kolor=0,k,r;
     switch (argc)
     {
@@ -434,10 +448,11 @@ int main(int argc, char* argv[]){
                 tab[i]=a;
             }
             min_kolor=kolorujsekwencyjnie(W,tab,graf);
+            showtab2(tab,W,graf);
      }
      if(wyb==4){
-            zeruj2(0,W,graf);
-            min_kolor=tabu_search(10000000,l_tabu,W,tab,graf);
+            zeruj(W,graf);
+            min_kolor=tabu_search(100000,l_tabu,W,tab,graf);
      }
      if(wyb==5){
             min_kolor=kolorujsort(W,tab,graf);
@@ -541,8 +556,7 @@ S
 ./dooddania1 gc_1000_300013.txt 4 10 10 1 200
 145
 
-./dooddania
-1 gc500.txt 4 20 20 2000 1
+./dooddania1 ranking/gc500.txt 4 20 20 2000 1
 78
 
 
